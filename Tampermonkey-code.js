@@ -19,5 +19,5 @@ clearInterval(itv);}
 }
 ,500);
 function main() {
-var realismScript = document.createElement('script'); realismScript.src="https://raw.githack.com/SimV23/Realism-Pack-Toggle/main/main.js";
+var realismScript = document.createElement('script'); realismScript.src="https://raw.githack.com/SimV23/Realism-Pack-Toggle/main/main.js";document.body.appendChild(realismScript);
 };
