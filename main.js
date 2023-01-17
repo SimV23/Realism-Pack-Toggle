@@ -1,4 +1,4 @@
-var enabled = {
+let enabled1 = {
   "sounds": true,
   "rename": true,
   "hotfixes": true,
@@ -12,14 +12,14 @@ var enabled = {
 };
 
 function toggleFeature(feature) {
-  enabled[feature] = !enabled[feature];
+  enabled1[feature] = !enabled1[feature];
   realismGo();
 }
 function realismGo() {
     console.log("Original scripts for immersion SFX, stall buffet, carrier catapults, and lift-based wingflex copyright AriakimTaiyo");
 
     //Making the names in the aircraft menu more accurate (there's six different variants of F-16, for example)
-  if(enabled.rename) {
+  if(enabled1.rename) {
       document.querySelectorAll('[data-aircraft]').forEach(function(e) {
           var elemName = e.outerText;
           if (elemName.includes("Su-35")) {
@@ -38,7 +38,7 @@ function realismGo() {
   }
 
   //sound addition area
-  if (enabled.sounds) {
+  if (enabled1.sounds) {
     function gBreath() {
         if (geofs.animation.values.loadFactor >= 3) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/cutgbreath.mp3")
@@ -73,7 +73,7 @@ function realismGo() {
     };
   }
 //addon chat area
-  if (enabled.chat) {
+  if (enabled1.chat) {
     let addonChat = document.createElement("li");
     addonChat.innerHTML = '<li><iframe width="1000", height="1500", left=350,top=50, src="https://chat.hyperjs.ml/GeoFS", title="Addon chat"</iframe></li>';
     document.getElementsByClassName("geofs-list geofs-toggle-panel geofs-preference-list geofs-preferences")[0].appendChild(addonChat);
@@ -82,7 +82,7 @@ function realismGo() {
     //geofs.api.waterDetection.create();
 
   //lag reduction area
-  if (enabled.lag) {
+  if (enabled1.lag) {
     lagReductionInterval = setInterval(function() {
         geofs.savePreferencesPanel();
         geofs.api.renderingSettings.degradedCollisions = true;
@@ -94,7 +94,7 @@ function realismGo() {
   }
 
   //shake (pFX) area
-  if (enabled.practicalFX) {
+  if (enabled1.practicalFX) {
     geofs.animation.values.shake = null;
 
     function getShake() {
@@ -114,16 +114,16 @@ function realismGo() {
         doShake()
     }, 10)
     gSoundInt = setInterval(function() {
-        if (geofs.animation.values.accZ >= 50 && geofs.animation.values.view == "cockpit" && enabled.sounds) {
+        if (geofs.animation.values.accZ >= 50 && geofs.animation.values.view == "cockpit" && enabled1.sounds) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/wind.mp3")
         }
-        if (geofs.animation.values.accZ >= 70 && geofs.animation.values.view == "cockpit" && enabled.sounds) {
+        if (geofs.animation.values.accZ >= 70 && geofs.animation.values.view == "cockpit" && enabled1.sounds) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/wind.mp3")
         }
     }, 1000)
   }
   //physics area
-  if (enabled.physics) {
+  if (enabled1.physics) {
     geofs.aircraftList["1000"].dir = "|models|aircraft|generics|c182|";
     var aircraftChecked = new Boolean(0);
     var script2 = document.createElement("script");
@@ -181,7 +181,7 @@ function realismGo() {
   }
 
   //visuals area
-  if (enabled.visuals) {
+  if (enabled1.visuals) {
     function lookBack() {
         if (geofs.camera.currentModeName == "cockpit" && geofs.addonAircraft.isF117 != 1) {
             geofs.camera.currentDefinition.position[0] = geofs.aircraft.instance.definition.cameras.cockpit.position[0] + geofs.camera.definitions["cockpit"].orientations.current[0] / 1000;
@@ -208,6 +208,8 @@ function realismGo() {
     scriptATM.onload = function() {
         redoAtmosphere();
     };
+	  geofs["overlayG.glsl"] = 'none yet';
+	  if (geofs["overlayG.glsl"] === 'none yet') {
     blackoutLoadInt = setInterval(function() {
         if (geofs.fx.atmosphere.atmospherePostProcessStage._ready == true) {
             geofs["overlayG.glsl"] = "" + `
@@ -310,7 +312,7 @@ void main() {
             clearInterval(blackoutLoadInt)
         }
     }, 1000)
-
+	  }
     function showTheStars() {
         if (geofs.aircraft.instance.altitude >= 80000 || geofs.isNight == 1) {
             geofs.api.viewer.scene.skyBox.show = 1;
@@ -323,7 +325,7 @@ void main() {
     }, 1000);
   }
   //spin hotfix area
-  if (enabled.hotfixes) {
+  if (enabled1.hotfixes) {
     function checkOverlays() {
         if (Object.values(geofs.runways.nearRunways)[0].icao == "VNLK") {
             void(0)
@@ -388,7 +390,7 @@ void main() {
         fixSpin();
     }, 1000);
   }
-  if (enabled.fbw) {
+  if (enabled1.fbw) {
     var scriptFBW = document.createElement("script");
     scriptFBW.src = "https://raw.githack.com/NVB9ALT/Fighter-jet-FBW/main/main.js";
     document.body.appendChild(scriptFBW);
@@ -396,7 +398,7 @@ void main() {
         addFBW()
     }
   }
-  if (enabled.utility) {
+  if (enabled1.utility) {
     var scriptAS = document.createElement("script");
     scriptAS.src = "https://cdn.jsdelivr.net/gh/NVB9ALT/GeoFS-Autospoilers@main/autospoilersA.js";
     document.body.appendChild(scriptAS);
@@ -428,7 +430,7 @@ void main() {
         runCatapults();
     };
   }
-if (enabled.sounds) {
+if (enabled1.sounds) {
     console.log("Original immersion SFX scripts copyright Ariakim Taiyo");
     console.log("Modified by NVB9 and Kolos26");
 
@@ -548,7 +550,7 @@ if (enabled.sounds) {
 
 
     //Add them in the places where the normal PFDs & HUDs are
-  if (enabled.hotfixes) {
+  if (enabled1.hotfixes) {
     geofs.calculatedAOA = null;
 
     function normalizeAroll() {//why not just `Math.abs();`?
@@ -820,7 +822,7 @@ if (enabled.sounds) {
         d.fillText("G " + geofs.animation.getValue("loadFactor").toFixed(1), 143, 110);
     }
   }
-  if (enabled.visuals) {
+  if (enabled1.visuals) {
     function checkNightStuff() {
         if (geofs.isNight == 1 && geofs.api.renderingSettings.advancedAtmosphere == 0 && geofs.camera.currentModeName !== "cockpit") {
             geofs.api.setImageryBrightness(150);
@@ -1711,5 +1713,6 @@ if (enabled.sounds) {
             animationValues: d
         });
     };
+	enabled1 = enabled1;
 }
 realismGo();
