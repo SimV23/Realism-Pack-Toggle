@@ -10,9 +10,36 @@ let enabled1 = {
   "fbw": true,
   "utility": true
 };
+function removeScripts() {
+  var a = document.getElementsByTagName("script")
+  for (let i = 0; i < a.length * 2; i++) {
+    try {
+      if (typeof a[i].type !== "string") {
+        a[i].remove();
+      }
+    if (a[i].type !== "text/javascript") {
+      a[i].remove();
+    }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+}
 
+let intervalIds = [];
 function toggleFeature(feature) {
   enabled1[feature] = !enabled1[feature];
+  removeScripts();
+  removeScripts();
+  removeScripts();
+  removeScripts();
+  intervalIds.forEach(function(e){
+    try {
+      clearInterval(e)
+    } catch (e) {
+      console.log(e);
+    }
+  })
   realismGo();
 }
 function realismGo() {
@@ -47,7 +74,7 @@ function realismGo() {
     gBreathInt = setInterval(function() {
         gBreath()
     }, 3500)
-
+intervalIds.push(gBreathInt)
     function flankerBeep() {
         if (geofs.aircraft.instance.id == 18 && (geofs.animation.values.aoa >= 15 || (geofs.animation.values.enginesOn == 0 && geofs.animation.values.groundContact == 0) || (geofs.animation.values.groundContact == 1 && geofs.animation.values.gearPosition != 1)) && geofs.aircraft.instance.liveryId != 6) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/flankerbeep2.m4a")
@@ -56,7 +83,7 @@ function realismGo() {
     flankerBeepInt = setInterval(function() {
         flankerBeep()
     }, 1000)
-
+intervalIds.push(flankerBeepInt)
     function flankerStall() {
         if (geofs.aircraft.instance.id == 18 && geofs.addonAircraft.isSu27 == 1 && geofs.animation.values.cobraMode == 1) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/flankerstall.m4a")
@@ -65,6 +92,8 @@ function realismGo() {
     flankerStallInt = setInterval(function() {
         flankerStall()
     }, 3000)
+    intervalIds.push(flankerStallInt)
+
     var scriptSB = document.createElement("script");
     scriptSB.src = "https://raw.githack.com/NVB9ALT/GeoFS-sound-changes/main/main.js";
     document.body.appendChild(scriptSB);
@@ -92,6 +121,7 @@ function realismGo() {
         }
     }, 100);
   }
+    intervalIds.push(lagReductionInterval)
 
   //shake (pFX) area
   if (enabled1.practicalFX) {
@@ -113,6 +143,8 @@ function realismGo() {
     shakeInterval = setInterval(function() {
         doShake()
     }, 10)
+        intervalIds.push(shakeInterval)
+
     gSoundInt = setInterval(function() {
         if (geofs.animation.values.accZ >= 50 && geofs.animation.values.view == "cockpit" && enabled1.sounds) {
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/wind.mp3")
@@ -122,6 +154,7 @@ function realismGo() {
         }
     }, 1000)
   }
+   intervalIds.push(gSoundInt)
   //physics area
   if (enabled1.physics) {
     geofs.aircraftList["1000"].dir = "|models|aircraft|generics|c182|";
@@ -146,6 +179,7 @@ function realismGo() {
             }
         }
     })
+   intervalIds.push(propwashInt)
 
     function runBladeCollisions() {
         if (geofs.animation.values.aroll > 70 || geofs.animation.values.aroll < -70) {
@@ -159,6 +193,7 @@ function realismGo() {
     bladeCollisionInterval = setInterval(function() {
         runBladeCollisions();
     }, 1000);
+   intervalIds.push(bladeCollisionInterval)
 
     function runTurbAccel() {
         if (geofs.aircraft.instance.definition.maxRPM == 10000) {
@@ -176,6 +211,7 @@ function realismGo() {
     turbAccelInt = setInterval(function() {
         runTurbAccel();
     }, 100);
+   intervalIds.push(turbAccelInt)
 
     
   }
@@ -190,6 +226,8 @@ function realismGo() {
     lookBackInterval = setInterval(function() {
         lookBack();
     }, 100);
+       intervalIds.push(lookBackInterval)
+
     var scriptC = document.createElement("script");
     scriptC.src = "https://cdn.jsdelivr.net/gh/SimV23/Weather-Mods@main/Advanced-2d-CloudsD.js";
     document.body.appendChild(scriptC);
@@ -312,6 +350,8 @@ void main() {
             clearInterval(blackoutLoadInt)
         }
     }, 1000)
+             intervalIds.push(blackoutLoadInt)
+
 	  }
     function showTheStars() {
         if (geofs.aircraft.instance.altitude >= 80000 || geofs.isNight == 1) {
@@ -323,7 +363,10 @@ void main() {
     starsInterval = setInterval(function() {
         showTheStars();
     }, 1000);
+    intervalIds.push(starsInterval)
   }
+               
+
   //spin hotfix area
   if (enabled1.hotfixes) {
     function checkOverlays() {
@@ -336,6 +379,7 @@ void main() {
     checkOverlayInt = setInterval(function() {
         checkOverlays()
     }, 1000)
+    intervalIds.push(checkOverlayInt)
     var scriptCCI = document.createElement("script");
     scriptCCI.src = "https://raw.githack.com/NVB9ALT/Fixed-CC-PFDs-and-HUDs/main/fix.js";
     document.body.appendChild(scriptCCI);
@@ -389,6 +433,7 @@ void main() {
     fixyFixy = setInterval(function() {
         fixSpin();
     }, 1000);
+    intervalIds.push(fixyFixy)
   }
   if (enabled1.fbw) {
     var scriptFBW = document.createElement("script");
@@ -441,6 +486,11 @@ if (enabled1.sounds) {
     effectInterval = null;
     accelInt = null;
     flexInterval = null;
+  intervalIds.push(soundInt)
+  intervalIds.push(tcasIntervalAnnounce)
+  intervalIds.push(effectInterval)
+  intervalIds.push(accelInt)
+  intervalIds.push(flexInterval)
 
     function checkForBoeing737() {
         if (geofs.aircraft.instance.id == 4 || geofs.aircraft.instance.id == 3054) { //if the aircraft currently being flown is a 737
@@ -483,7 +533,7 @@ if (enabled1.sounds) {
     checkInterval = setInterval(function() {
         checkForBoeing737()
     }, 1000)
-
+intervalIds.push(checkInterval)
     var b777sounds = new Boolean(0)
 
     function checkForBoeing777() {
@@ -513,6 +563,7 @@ if (enabled1.sounds) {
     checkInterval1 = setInterval(function() {
         checkForBoeing777()
     }, 1000)
+intervalIds.push(checkInterval1)
 
     //variable to tell if the script has run or not
     var a320Sounds = 0
@@ -547,6 +598,7 @@ if (enabled1.sounds) {
         checkFora320()
     }, 1000)
 }
+intervalIds.push(checkInterval2)
 
 
     //Add them in the places where the normal PFDs & HUDs are
@@ -575,6 +627,7 @@ if (enabled1.sounds) {
     aoaInterval = setInterval(function() {
         verifyAoA()
     }, 10)
+intervalIds.push(aoaInterval)
 
     //now includes machmeter!
     instruments.renderers.genericHUD = function(a) {
@@ -845,7 +898,7 @@ if (enabled1.sounds) {
     checkMarbleInterval = setInterval(function() {
         checkNightStuff()
     }, 10)
-
+intervalIds.push(checkMarbleInterval)
     geofs.condensation = {};
     geofs.cons = true;
     geofs.condensation.update = function() {
