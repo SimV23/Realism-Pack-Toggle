@@ -1,3 +1,4 @@
+
 let enabled1 = {
   "sounds": true,
   "rename": true,
@@ -10,6 +11,76 @@ let enabled1 = {
   "fbw": true,
   "utility": true
 };
+
+if (typeof localStorage.toggles === "string") {
+   enabled1 = JSON.parse(localStorage.toggles);
+} else {
+  localStorage.toggles = JSON.stringify(enabled1);
+}
+
+let intervalIds = [];
+let toggleE = {};
+//If you need to add a switch in the options panel to toggle some feature of your addon, this is how to do it.
+//PLEASE NOTE: replace all "example"s with a word relevant to your addon.
+//So if you're making condensation effects, "geofs.example" becomes "geofs.condensation", and "exampleVar" becomes "condensationVar",
+//and set "toggleE" to "toggleCons". Hopefully you get the idea.
+
+//Toggle switch code
+
+
+
+function createToggle(parameter) {
+  geofs[parameter] = {};
+  geofs[parameter].update = function() {
+    toggleFeature(parameter);
+    if (enabled1[parameter] == false) {
+      toggleE[parameter].setAttribute("class", "mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded");
+    } else {
+      toggleE[parameter].setAttribute("class", "mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded is-checked")
+    } 
+  };
+  let elementSel = document.getElementsByClassName('geofs-preference-list')[0].getElementsByClassName('geofs-advanced')[0].getElementsByClassName('geofs-stopMousePropagation')[0];
+  toggleE[parameter] = document.createElement("label");
+      toggleE[parameter].setAttribute("class", "mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded");
+      toggleE[parameter].setAttribute("for", parameter);
+      toggleE[parameter].setAttribute("id", parameter);
+      toggleE[parameter].setAttribute("tabindex", "0");
+      toggleE[parameter].setAttribute("dataUpgraded", ",MaterialSwitch,MaterialRipple");
+      toggleE[parameter].innerHTML = '<input type="checkbox" id='+parameter+' class="mdl-switch__input" data-gespref="geofs.sounds.preference"><span class="mdl-switch__label">'+parameter+'</span>';
+  
+  elementSel.appendChild(toggleE[parameter]);
+  toggleE[parameter].addEventListener("click", geofs[parameter].update);
+}
+
+
+
+Object.entries(enabled1).forEach(function(e){
+  createToggle(e[0]);
+})
+
+var graphicsObj;
+Array.prototype.slice.call(document.getElementsByClassName("geofs-collapsible")).forEach(function(e){
+    if (e.innerHTML.includes("Graphics")) {
+      graphicsObj = e;
+    }
+  })
+var cInt2 = setInterval(function(){
+  if (graphicsObj.attributes.class.nodeValue.includes("geofs-expanded")) {
+    setTimeout(function(){
+      if (document.getElementsByClassName("geofs-advancedGraphics")[0].attributes.class.nodeValue.includes("geofs-expanded")) {
+    Object.entries(enabled1).forEach(function(e){
+        if (enabled1[e[0]]) {
+              toggleE[e[0]].setAttribute("class", "mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded is-checked");
+            }
+      })
+    console.log("triggered")
+    clearInterval(cInt2);
+  }
+    }, 100)
+  
+  }
+},100)
+
 function removeScripts() {
   var a = document.getElementsByTagName("script")
   for (let i = 0; i < a.length * 2; i++) {
@@ -26,23 +97,36 @@ function removeScripts() {
   }
 }
 
-let intervalIds = [];
+
 function toggleFeature(feature) {
   enabled1[feature] = !enabled1[feature];
+  try {
+    document.getElementById("condensation").remove();
+    document.getElementById("advancedClouds").remove();
+    intervalIds.push(condensationInt)
+  } catch(e) {
+    console.log(e);
+  }
   removeScripts();
   removeScripts();
   removeScripts();
   removeScripts();
+
   intervalIds.forEach(function(e){
     try {
-      clearInterval(e)
+      clearInterval(e);
     } catch (e) {
       console.log(e);
     }
   })
+  geofs.fx.vcondensationEmitterLeft = {};
+  geofs.fx.vcondensationEmitterRight = {};
+  geofs.aircraft.instance.reset();
   realismGo();
+  localStorage.toggles = JSON.stringify(enabled1);
 }
 function realismGo() {
+//  try{
     console.log("Original scripts for immersion SFX, stall buffet, carrier catapults, and lift-based wingflex copyright AriakimTaiyo");
 
     //Making the names in the aircraft menu more accurate (there's six different variants of F-16, for example)
@@ -153,8 +237,9 @@ intervalIds.push(flankerBeepInt)
             audio.impl.html5.playFile("https://142420819-645052386429616373.preview.editmysite.com/uploads/1/4/2/4/142420819/wind.mp3")
         }
     }, 1000)
+       intervalIds.push(gSoundInt)
   }
-   intervalIds.push(gSoundInt)
+
   //physics area
   if (enabled1.physics) {
     geofs.aircraftList["1000"].dir = "|models|aircraft|generics|c182|";
@@ -597,8 +682,9 @@ intervalIds.push(checkInterval1)
     checkInterval2 = setInterval(function() {
         checkFora320()
     }, 1000)
+  intervalIds.push(checkInterval2)
 }
-intervalIds.push(checkInterval2)
+
 
 
     //Add them in the places where the normal PFDs & HUDs are
@@ -1767,5 +1853,8 @@ intervalIds.push(checkMarbleInterval)
         });
     };
 	enabled1 = enabled1;
+  //} catch (e) {
+  //  console.log(e);
+  //}
 }
 realismGo();
